@@ -19,3 +19,5 @@ Run
 ```
 
 See the [API reference](http://openonderwijsdata.staging.dispectu.com/static/documentation/rst/api.html) for the query-string. Example: `q=amsterdam`
+
+Edit map.ls for the document-to-csv mapping.
