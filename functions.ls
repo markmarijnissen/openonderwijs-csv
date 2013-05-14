@@ -6,7 +6,7 @@ _ = require 'prelude-ls'
 
 # extracts CSV columns from the MAP
 getColumns = ->
-  columns = []
+  columns = ["_index","_type","_id"]
   for i,index of map
     for i,type of index
       for column,value of type
@@ -18,7 +18,10 @@ getColumns = ->
 flatten = (list) ->
   result = []
   for old-item in list
-    new-item = {}
+    new-item = 
+      "_index": old-item._index
+      "_type": old-item._type
+      "_id": old-item._id
     for column,value of map[old-item._index][old-item._type]
       if typeof value is "string"
         new-item[column] = old-item._source[value]
