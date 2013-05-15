@@ -10,14 +10,15 @@ Install [Node.js](www.nodejs.org)
   git clone https://github.com/markmarijnissen/openonderwijs-csv.git
   cd openonderwijs-csv
   npm install
+  npm install LiveScript -g
 ```
 
 Run
 ===
 ```
-  node cli.js
+  lsc api-to-csv
 ```
 
 See the [API reference](http://openonderwijsdata.staging.dispectu.com/static/documentation/rst/api.html) for the query-string. Example: `q=amsterdam`
 
-Edit `map.ls` for the document-to-csv mapping.
+See `map.ls` for the document-to-csv mapping.

@@ -14,8 +14,8 @@
   "license": "BSD",
   "dependencies": {
     "prompt": "~0.2.9",
-    "LiveScript": "~1.1.1",
     "json2csv": "~2.0.0",
-    "prelude-ls": "~1.0.0"
+    "prelude-ls": "~1.0.0",
+    "walk": "~2.2.1"
   }
 }
