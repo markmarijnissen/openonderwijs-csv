@@ -23,16 +23,19 @@ If you are using data-dumps, unzip them to
 ```
 
 ### Run
+Interactive prompt:
 ```
-  lsc api-to-csv # for prompt
-  lsc api-to-csv info # to use the "map/dropout" configuration
-  lsc json-to-csv # for prompt
-  lsc json-to-csv finance # to use the "map/finance" configuration
+  lsc api-to-csv 
+  lsc json-to-csv
 ```
 
-See the [API reference](http://openonderwijsdata.staging.dispectu.com/static/documentation/rst/api.html) for the query-string. Example: `q=amsterdam`
+See the [API reference](http://openonderwijsdata.staging.dispectu.com/static/documentation/rst/api.html) for the query-string. For example: `q=amsterdam`
 
-See `map.ls` for the document-to-csv mapping. Available data is documented [here](http://openonderwijsdata.staging.dispectu.com/static/documentation/rst/data.html)
+You can also load a mapping file from the `map` directory:
+```
+  lsc api-to-csv info.ls
+  lsc json-to-csv dropouts.ls
+```
 
 ### JSON-to-CSV mapping (map/xxx.ls)
 
@@ -42,9 +45,12 @@ OpenOnderwijs has categorized the data sources as follows:
 2. **type**: vo_board (schoolbestuur), vo_school (school), vo_branch (afdeling)
 3. **id**: document-index
 
-The `map/xxx.ls` configure for each `index/type` combination how values are 
+Available data is documented [here](http://openonderwijsdata.staging.dispectu.com/static/documentation/rst/data.html)
+
+The `map/xxx.ls` describes for each `index/type` how values are 
 extracted.
 
+#### Example 1: Extract a simple value
 For example, to extract all "name" field as the "naam" column from all `duo/vo_board`, write this:
 ```
 "duo":
@@ -52,38 +58,39 @@ For example, to extract all "name" field as the "naam" column from all `duo/vo_b
     "naam":"name"
 ```
 
-#### Extract and transform a nested value.
+#### Example 2: Extract and transform a nested value.
+Some documents contain nested properties. These can be extracted using a function:
 ```
 "duo":
   "vo_board"
     "city": (doc) -> doc.address.city
 ```
 
-Some documents contain nested property. For example, an `address` contains a city. Write a function to extract this value.
-
-You can also use functions for data transormation:
+You can also perform more complex transformations:
 ```
 "duo":
   "vo_board":
     "address": (doc) -> doc.address.strees + " " + doc.address.city
 ```
 
-#### Map a single document to multiple CSV-rows
+#### Example 3: Map a single document to multiple CSV-rows
 Sometimes you want to split a single document into multiple rows. For example, when you want to extract the number of dropouts per year.
 
 To split a single document into multiple rows, use the `split` function.
 ```
 "duo":
   "vo_school":
+ 
     "dropouts_per_year.total_dropouts": (doc,split) ->
       for i,dropout of doc.dropouts_per_year
         split(dropout.year,dropout.total_dropouts)
+ 
     "dropouts_per_year.total_students": (doc,add) ->
       for i,dropout of doc.dropouts_per_year
         split(dropout.year,dropout.total_students)
 ```
 
-`add` takes two arguments:
+`split` takes two arguments:
 
 1. `split-index`: the name of your CSV-row, in this case we split a document into years.
 2. `value`: the value of that row , in this case number of dropouts or students.
