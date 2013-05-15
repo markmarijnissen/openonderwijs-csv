@@ -24,61 +24,68 @@ If you are using data-dumps, unzip them to
 
 ### Run
 ```
-  lsc api-to-csv
-  lsc json-to-csv
+  lsc api-to-csv # for prompt
+  lsc api-to-csv info # to use the "map/dropout" configuration
+  lsc json-to-csv # for prompt
+  lsc json-to-csv finance # to use the "map/finance" configuration
 ```
 
 See the [API reference](http://openonderwijsdata.staging.dispectu.com/static/documentation/rst/api.html) for the query-string. Example: `q=amsterdam`
 
 See `map.ls` for the document-to-csv mapping. Available data is documented [here](http://openonderwijsdata.staging.dispectu.com/static/documentation/rst/data.html)
 
-### Mapping (map.ls)
-  
-OpenOnderwijs heeft documenten als volgt geindexeerd:
-index: duo, onderwijsinspectie, vensters
-type: vo_board (schoolbestuur), vo_school (school), vo_branch (afdeling)
-id: document-index
+### JSON-to-CSV mapping (map/xxx.ls)
 
-Je kunt per `index/type` combinatie aangeven hoe de data in de CSV moet verschijnen:
+OpenOnderwijs has categorized the data sources as follows:
 
+1. **index**: duo, onderwijsinspectie, vensters
+2. **type**: vo_board (schoolbestuur), vo_school (school), vo_branch (afdeling)
+3. **id**: document-index
 
-#### Copy value to column
+The `map/xxx.ls` configure for each `index/type` combination how values are 
+extracted.
+
+For example, to extract all "name" field as the "naam" column from all `duo/vo_board`, write this:
 ```
 "duo":
   "vo_board"
     "naam":"name"
 ```
 
-Schrijft "name" weg onder de "naam" kolom voor alle `duo/vo_board` documenten.
-
-#### Transform a (nested) value to column
+#### Extract and transform a nested value.
 ```
 "duo":
   "vo_board"
     "city": (doc) -> doc.address.city
 ```
 
-Schrijft de stad weg onder de "city" kolom, deze word uit de geneste address.city gehaald.
+Some documents contain nested property. For example, an `address` contains a city. Write a function to extract this value.
 
-Je kunt ook complexere functies gebruiken, b.v.
-
+You can also use functions for data transormation:
 ```
 "duo":
   "vo_board":
     "address": (doc) -> doc.address.strees + " " + doc.address.city
 ```
 
-#### Transform a single document to multiple CSV-rows:
-Soms bevat één document meerdere CSV-regels; bijvoorbeeld als je voor één school een lijst met dropouts hebt per jaar. In dat geval wil je niet voor elke school een regel, maar voor elk jaar.
+#### Map a single document to multiple CSV-rows
+Sometimes you want to split a single document into multiple rows. For example, when you want to extract the number of dropouts per year.
 
+To split a single document into multiple rows, use the `split` function.
 ```
 "duo":
   "vo_school":
-    "dropouts_per_year.total_dropouts": (doc,add) ->
+    "dropouts_per_year.total_dropouts": (doc,split) ->
       for i,dropout of doc.dropouts_per_year
-        add(dropout.year,dropout.total_dropouts)
+        split(dropout.year,dropout.total_dropouts)
+    "dropouts_per_year.total_students": (doc,add) ->
+      for i,dropout of doc.dropouts_per_year
+        split(dropout.year,dropout.total_students)
 ```
 
-In dat geval kun je de "add"-functie gebruiken. Deze heeft twee argumenten
-- index: dit is de regel-index van het CSV-bestand waarop je splitst, b.v. het jaar
-- value: dit is de waarde (b.v. aantal dropouts)
+`add` takes two arguments:
+
+1. `split-index`: the name of your CSV-row, in this case we split a document into years.
+2. `value`: the value of that row , in this case number of dropouts or students.
+
+There will be a row for each `split-index`. The split-index (`year`) can be found in the `_split` column. Because both columns (`total_students`, `total_dropouts`) share the same split-index (`year`), the numbers are still valid (and will not get mixed up)

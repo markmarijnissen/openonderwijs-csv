@@ -24,24 +24,24 @@ module.exports =
         "rpa_area_code":"rpa_area_code"
         "wgr_area":"wgr_area"
         "wgr_area_code":"wgr_area_code" 
-        "dropouts_per_year.dropouts_with_mbo1_diploma": (doc,add) ->
+        "dropouts_per_year.dropouts_with_mbo1_diploma": (doc,split) ->
           for i,dropout of doc.dropouts_per_year
-            add(dropout.year,dropout.dropouts_with_mbo1_diploma)
-        "dropouts_per_year.dropouts_with_vmbo_diploma": (doc,add) ->
+            split(dropout.year,dropout.dropouts_with_mbo1_diploma)
+        "dropouts_per_year.dropouts_with_vmbo_diploma": (doc,split) ->
           for i,dropout of doc.dropouts_per_year
-            add(dropout.year,dropout.dropouts_with_vmbo_diploma)
-        "dropouts_per_year.dropouts_without_diploma": (doc,add) ->
+            split(dropout.year,dropout.dropouts_with_vmbo_diploma)
+        "dropouts_per_year.dropouts_without_diploma": (doc,split) ->
           for i,dropout of doc.dropouts_per_year
-            add(dropout.year,dropout.dropouts_without_diploma)
-        "dropouts_per_year.education_structure": (doc,add) ->
+            split(dropout.year,dropout.dropouts_without_diploma)
+        "dropouts_per_year.education_structure": (doc,split) ->
           for i,dropout of doc.dropouts_per_year
-            add(dropout.year,dropout.education_structure)
-        "dropouts_per_year.sector": (doc,add) ->
+            split(dropout.year,dropout.education_structure)
+        "dropouts_per_year.sector": (doc,split) ->
           for i,dropout of doc.dropouts_per_year
-            add(dropout.year,dropout.sector)
-        "dropouts_per_year.total_dropouts": (doc,add) ->
+            split(dropout.year,dropout.sector)
+        "dropouts_per_year.total_dropouts": (doc,split) ->
           for i,dropout of doc.dropouts_per_year
-            add(dropout.year,dropout.total_dropouts)
-        "dropouts_per_year.total_students": (doc,add) ->
+            split(dropout.year,dropout.total_dropouts)
+        "dropouts_per_year.total_students": (doc,split) ->
           for i,dropout of doc.dropouts_per_year
-            add(dropout.year,dropout.total_students)
+            split(dropout.year,dropout.total_students)
