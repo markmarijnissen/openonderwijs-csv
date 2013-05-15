@@ -77,5 +77,5 @@ params =
       default: "info.ls"
     * name:'output'
       description:'Output CSV-file'
-      default:"output.csv"
+      default:"csv/output.csv"
 run(params,api-to-csv)

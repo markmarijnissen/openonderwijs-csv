@@ -15,11 +15,11 @@ Install [Node.js](www.nodejs.org)
 
 If you are using data-dumps, unzip them to
 ```
-  ./data/duo/vo_board
-  ./data/duo/vo_branch
-  ./data/duo/vo_school
-  ./data/onderwijsinspectie/vo_branch
-  ./data/schoolvo/vo_branch
+  ./json/duo/vo_board
+  ./json/duo/vo_branch
+  ./json/duo/vo_school
+  ./json/onderwijsinspectie/vo_branch
+  ./json/schoolvo/vo_branch
 ```
 
 ### Run

@@ -29,11 +29,11 @@ json-to-csv = (input) ->
 params = 
   * name: 'path'
     description: 'JSON directory'
-    default: 'data'
+    default: 'json'
   * name: 'map'
     description: 'JSON-to-CSV mapping'
     default: "info.ls"
   * name:'output'
     description:'CSV-file'
-    default:"info.csv"
+    default:"csv/info.csv"
 run(params,json-to-csv)

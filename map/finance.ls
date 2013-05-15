@@ -1,7 +1,7 @@
 module.exports = 
-  path: "data/duo/vo_board"
+  path: "json/duo/vo_board"
   query: "q=amsterdam"
-  output: "finance.csv"
+  output: "csv/finance.csv"
   map:
     "duo":
       "vo_board":

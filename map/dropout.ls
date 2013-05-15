@@ -1,7 +1,7 @@
 module.exports = 
-  path: "data/duo/vo_school"
+  path: "json/duo/vo_school"
   query: "q=amsterdam"
-  output: "dropout.csv"
+  output: "csv/dropout.csv"
   map:
     "duo":
       "vo_school":
