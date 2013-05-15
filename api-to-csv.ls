@@ -1,37 +1,10 @@
-prompt = require('prompt')
 http = require('http')
+colors = require('colors')
 fs = require('fs') #FileSystem
-json2csv = require('json2csv')
-_ = require 'prelude-ls'
 global <<< require('./functions.ls')
-
-################################################################
-#                         CONFIG
-config = 
-  url: "http://openonderwijsdata.staging.dispectu.com/api/v1"
 
 ###############################################################
 ##             PRIVATE FUNCTIONS
-
-# flattens nested JSON from results to flat JSON 
-# according to the MAP 
-flattenSearchHits = (searchHits,map) ->
-  results = []
-  for hit in searchHits
-    item = 
-      "_index": hit._index
-      "_type": hit._type
-      "_id": hit._id
-    hit <<< hit._source
-    results = results.concat(flatten(hit,map))
-
-  results
-
-# convenience method for console.log
-log = console.log
-
-# convenience method for console.error
-error = console.error
 
 # synchronous version of http request
 request = (url,callback) ->
@@ -49,49 +22,60 @@ request = (url,callback) ->
   http.get(url,responseHandler)
     ..on 'error',(err) -> callback?(err,null)
 
-# save a JSON search-result as CSV according to the map
-save = (filename,map,searchResult) ->
-  searchResult = JSON.parse(searchResult) if typeof searchResult is "string"
-  args = 
-    data: flattenSearchHits(searchResult?.hits,map)
-    fields: getColumns(map)
-  (err,csv) <- json2csv args
-  if err
-    console.error err,args.data
-  else
-    (err) <- fs.writeFile filename,csv
-    console.error "Could not save file:",err if err
-
 ################################################################
 #                         MAIN
-prompt.start!
+api-to-csv = (input) ->
+  size = 50
+  input.max = 1000 if not input.max
+  one-round = (from) ->
+    # handle request
+    url = "#{config.url}/search?#{input.query}&from=#{from}&size=#{size}"
+    console.log url.cyan if from is 0
+    @from = from
+    (err,response) <~ request url
+    # query is invalid
+    if err and err.statusCode is 400
+      message = JSON.parse(response)?.message or response
+      console.error "Invalid Query: #message".red
+    # other error
+    else if err
+      console.error 'Unknown Error:'.red
+      console.log err
+    # succes! save as *.csv
+    else
+      response = JSON.parse(response)
+      columns =  get-columns(input.map)
+      if @from is 0
+        console.log "Found #{response.total} documents.".green
+        write-csv-header(input.output,columns)
+      for hit in response.hits
+        item = 
+          "_index": hit._index
+          "_type": hit._type
+          "_id": hit._id
+        hit <<< hit._source
+        obj-arr = flatten(hit,input.map)
+        csv = obj-arr-to-csv(obj-arr,columns)
+        fs.appendFile input.output,csv
+      @from = @from + 50
+      if @from > response.total or @from > input.max
+        console.log "Done!".green
+      else
+        console.log "#{@from} / #{Math.min(response.total,input.max)}".yellow
+        one-round(@from)
+  one-round(0)
 
-# perform request
-(err,input) <- prompt.get 'query'
-input.query = input.query 
-url = "#{config.url}/search?#{input.query}"
-log url
-
-# handle request
-(err,response) <- request url
-# query is invalid
-if err and err.statusCode is 400
-  message = JSON.parse(response)?.message or response
-  error "Invalid Query: #message"
-# other error
-else if err
-  error 'Unknown Error:'
-  log err
-# succes! save as *.csv
-else
-  response = JSON.parse(response)
-  log "Found #{response.total} documents."
-  options = 
+params = 
+    * name: 'query'
+      description: 'Query'
+      default: ''
+    * name: 'max'
+      description: 'Maximum number of results'
+      default: '1000'
     * name: 'map'
       description: 'JSON-to-CSV mapping'
-      default: "map.ls"
-    * name:'filename'
+      default: "info.ls"
+    * name:'output'
       description:'Output CSV-file'
       default:"output.csv"
-  (err,input) <- prompt.get options
-  save(input.filename,require("./"+input.map),response)
+run(params,api-to-csv)
