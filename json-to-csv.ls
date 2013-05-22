@@ -15,8 +15,7 @@ json-to-csv = (input) ->
     next()
     (err,json) <- fs.readFile "#{root}/#{stats.name}"
     if stats.name.substr(-5) isnt ".json" then return
-    if err then return throw err
-    
+    if err then return throw err    
     try
       doc = JSON.parse(json)
     catch
