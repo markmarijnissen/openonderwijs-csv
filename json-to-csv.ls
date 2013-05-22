@@ -14,9 +14,14 @@ json-to-csv = (input) ->
     i++
     next()
     (err,json) <- fs.readFile "#{root}/#{stats.name}"
+    if stats.name.substr(-5) isnt ".json" then return
     if err then return throw err
     
-    doc = JSON.parse(json)
+    try
+      doc = JSON.parse(json)
+    catch
+      console.error "Invalid JSON file: #{root}/#{stats.name}".red
+      return
     [...,doc._index,doc._type] = root.split "/"
     doc._id = stats.name.slice(0,-5)
     
