@@ -16,7 +16,7 @@ module.exports =
         "education_area_code":"education_area_code"
         "rmc_region":"rmc_region"
         "rmc_region_code":"rmc_region_code"
-        "education_structures": (doc) -> doc.education_structures?.join("|")
+        "education_structures": (doc) -> doc.education_structures.join("|")
         "muncipality_code":"muncipality_code"
         "dropouts_per_year_reference_date":"dropouts_per_year_reference_date"
         "dropouts_per_year_url":"dropouts_per_year_url"

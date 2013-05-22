@@ -18,7 +18,7 @@ module.exports =
         "name":"name"
         "brin":"brin"
         "board_id":"board_id"
-        "brand_id":"brand_id"
+        "branch_id":"branch_id"
         "website":"website"
 
     "onderwijsinspectie":
@@ -27,7 +27,7 @@ module.exports =
         "brin":"brin"
         "board":"board"
         "board_id":"board_id"
-        "brand_id":"brand_id"
+        "branch_id":"branch_id"
         "website":"website"
 
     "schoolvo":
@@ -36,5 +36,5 @@ module.exports =
         "brin":"brin"
         "board":"board"
         "board_id":"board_id"
-        "brand_id":"brand_id"
+        "branch_id":"branch_id"
         "website":"website"
