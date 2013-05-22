@@ -8,19 +8,16 @@ module.exports =
         "name":"name"
         "board_id":"board_id"
         "website":"website"
-
       "vo_school":
         "name":"name"
         "board_id":"board_id"
         "brin":"brin"
-
       "vo_branch":
         "name":"name"
         "brin":"brin"
         "board_id":"board_id"
         "branch_id":"branch_id"
         "website":"website"
-
     "onderwijsinspectie":
       "vo_branch":
         "name":"name"
@@ -29,7 +26,6 @@ module.exports =
         "board_id":"board_id"
         "branch_id":"branch_id"
         "website":"website"
-
     "schoolvo":
       "vo_branch":
         "name":"name"
